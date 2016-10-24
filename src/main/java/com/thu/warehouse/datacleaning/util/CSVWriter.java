@@ -1,4 +1,6 @@
-package com.thu.warehouse.datacleaning;
+package com.thu.warehouse.datacleaning.util;
+
+import com.thu.warehouse.datacleaning.CSVException;
 
 public class CSVWriter {
 

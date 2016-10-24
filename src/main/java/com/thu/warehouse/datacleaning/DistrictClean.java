@@ -12,6 +12,8 @@ import java.util.Set;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
+import com.thu.warehouse.datacleaning.util.DataCleanException;
+import com.thu.warehouse.datacleaning.util.DataType;
 
 public class DistrictClean {
 

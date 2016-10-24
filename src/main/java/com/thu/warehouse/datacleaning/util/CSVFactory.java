@@ -1,4 +1,4 @@
-package com.thu.warehouse.datacleaning;
+package com.thu.warehouse.datacleaning.util;
 
 public class CSVFactory {
 

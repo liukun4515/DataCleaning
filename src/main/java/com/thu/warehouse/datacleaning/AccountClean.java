@@ -4,12 +4,17 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
+import com.thu.warehouse.datacleaning.util.DataCleanException;
+import com.thu.warehouse.datacleaning.util.DataType;
 
 public class AccountClean {
 	/*
@@ -19,7 +24,7 @@ public class AccountClean {
 	 */
 
 	enum ErrorType {
-		ACCOUNT_ID_ERROR, DISTRICT_ID_ERROR, FREQUENCY_ERROR, DATA_ERROR, LENGTH_ERROR, ACCOUNT_ID_UNIQUE_ERROR
+		ACCOUNT_ID_ERROR, DISTRICT_ID_ERROR, FREQUENCY_ERROR, DATA_ERROR, LENGTH_ERROR, ACCOUNT_ID_UNIQUE_ERROR, DISTRICT_ID_NOT_FOUNT_ERROR
 	}
 
 	private static final String MESICNE = "POPLATEK MESICNE";
@@ -72,6 +77,14 @@ public class AccountClean {
 			cleanFileWriter.writeNext(schema);
 			errorFileWriter.writeNext(errorSchema);
 			Set<Integer> account_id_set = new HashSet<>();
+			Set<Integer> district_id_set = new HashSet<>();
+			// read the district table add the district id into the set
+			districtFileReader.readNext();// skip the schema
+			List<String[]> list = districtFileReader.readAll();
+			for (String[] strings : list) {
+				district_id_set.add(Integer.valueOf(strings[0]));
+			}
+			// check the values
 			while ((values = inputFileReader.readNext()) != null) {
 				String errorInfo = "";
 				if (values.length != schema.length) {
@@ -94,9 +107,17 @@ public class AccountClean {
 				}
 				// check the district id is match the district file
 				// read the district file and check the id is right
-				/*
-				 * 
-				 */
+				String districtString = values[1];
+				if (districtString != null && districtString.matches("^[1-9]\\d*$")) {
+					int districtInt = Integer.valueOf(districtString);
+					if (district_id_set.contains(districtInt)) {
+
+					} else {
+						errorInfo = errorInfo + ErrorType.DISTRICT_ID_NOT_FOUNT_ERROR + " ";
+					}
+				} else {
+					errorInfo = errorInfo + ErrorType.DISTRICT_ID_ERROR + " ";
+				}
 
 				// check the frequency
 				String freString = values[2];
@@ -110,18 +131,21 @@ public class AccountClean {
 					errorInfo = errorInfo + ErrorType.FREQUENCY_ERROR + " ";
 				}
 
-				// check the data type
-				/*
-				 * 
-				 */
+				// check the data
 				String dataString = values[3];
 				if (dataString != null) {
 					// data type format check
-
+					String dataFormat = "yyyy/MM/dd HH:mm";
+					SimpleDateFormat format = new SimpleDateFormat(dataFormat);
+					try {
+						format.parse(dataString);
+					} catch (ParseException e) {
+						errorInfo = errorInfo + ErrorType.DATA_ERROR + " ";
+					}
 				} else {
 					errorInfo = errorInfo + ErrorType.DATA_ERROR + " ";
 				}
-				
+
 				// output the value and the error information
 				if (errorInfo.length() > 0) {
 					values = Arrays.copyOf(values, values.length + 1);
@@ -129,7 +153,7 @@ public class AccountClean {
 					errorFileWriter.writeNext(values);
 				} else {
 					// do't write the clean data
-//					cleanFileWriter.writeNext(values);
+					// cleanFileWriter.writeNext(values);
 				}
 
 			}
