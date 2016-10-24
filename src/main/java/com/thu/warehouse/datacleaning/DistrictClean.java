@@ -16,14 +16,11 @@ import com.opencsv.CSVWriter;
 public class DistrictClean {
 
 	/*
-	 * 这个表中清洗的主要内容有： 
-	 * 	1. district id, 必须为唯一的数字，不能为整数
-	 *  2. district name 与 region一起清洗，不能为空，并且桶一个name不能对应多个region 
-	 *  3. hab number 必须为整数或者长整数，并且必须大于等于0 
-	 *  4.city number 必须为整数或者长整数，并且必须大于等于0 
-	 *  5. ave salary 必须为整数或者长整数，并且大于等于0 
-	 *  6.umemploy rate 必须为浮点数，并且大于等于0，小于等于1或者100 
-	 *  7. crime number必须为整数或者长整数，并且大于等于0
+	 * 这个表中清洗的主要内容有： 1. district id, 必须为唯一的数字，不能为整数 2. district name 与
+	 * region一起清洗，不能为空，并且桶一个name不能对应多个region 3. hab number 必须为整数或者长整数，并且必须大于等于0
+	 * 4.city number 必须为整数或者长整数，并且必须大于等于0 5. ave salary 必须为整数或者长整数，并且大于等于0
+	 * 6.umemploy rate 必须为浮点数，并且大于等于0，小于等于1或者100 7. crime
+	 * number必须为整数或者长整数，并且大于等于0
 	 */
 
 	private static final String originFile = "district.csv";
@@ -81,13 +78,13 @@ public class DistrictClean {
 				String errorInfo = "";
 				// check the length
 				if (values.length != schemaLength) {
-					errorInfo = errorInfo + ErrorType.LENGTH_ERROR.toString() + " ";
+					errorInfo = errorInfo + ErrorType.LENGTH_ERROR + " ";
 				}
 				// check the value
 				// check the id is int and not null and it unique
 				String disIdString = values[0];
-				if (disIdString.matches("^[1-9]\\d*$")) {
-					System.out.println("mathc id " + disIdString);
+				if (disIdString != null && disIdString.matches("^[1-9]\\d*$")) {
+					System.out.println("match id " + disIdString);
 					// check the id is unique
 					int disIdInt = Integer.valueOf(disIdString);
 					if (dis_id.contains(disIdInt)) {
@@ -122,7 +119,7 @@ public class DistrictClean {
 				if (hab_numString != null && hab_numString.matches("^[1-9]\\d*$")) {
 					int hab_numInt = Integer.valueOf(hab_numString);
 					if (hab_numInt >= 0) {
-
+						// do nothing
 					} else {
 						errorInfo = errorInfo + ErrorType.HAB_NUMBER_ERROR + " ";
 					}
