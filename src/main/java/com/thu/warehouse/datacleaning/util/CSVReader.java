@@ -1,7 +1,12 @@
 package com.thu.warehouse.datacleaning.util;
 
-import com.thu.warehouse.datacleaning.CSVException;
 
+
+/**
+ * @deprecated
+ * @author liukun
+ *
+ */
 public class CSVReader {
 
 	private String filename = null;

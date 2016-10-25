@@ -189,6 +189,7 @@ public class DistrictClean {
 					// cleanFileWriter.writeNext(values);
 				}
 				// the clean file
+				cleanFileWriter.writeNext(values);
 
 			}
 			inputFileReader.close();
@@ -204,7 +205,7 @@ public class DistrictClean {
 
 	public static void main(String[] args) throws DataCleanException, IOException {
 		// TODO Auto-generated method stub
-		clean(originFile, cleanFile, errorFile);
+//		clean(originFile, cleanFile, errorFile);
 
 	}
 

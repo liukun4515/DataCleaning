@@ -1,7 +1,6 @@
 package com.thu.warehouse.datacleaning;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -25,11 +24,11 @@ public class OrderClean {
 	private static final DataType[] dataType = { DataType.INT, DataType.INT, DataType.STRING, DataType.INT,
 			DataType.INT, DataType.STRING };
 
-	private static final String origin = "";
-	private static final String clean = "";
-	private static final String error = "";
-	private static final String account = "";
-	
+	private static final String origin = "order.csv";
+	private static final String clean = "orderClean.csv";
+	private static final String error = "orderError.csv";
+	private static final String account = "accountClean.csv";
+
 	private static final String POJISTNE = "POJISTNE";
 	private static final String SIPO = "SIPO";
 	private static final String UVER = "UVER";
@@ -64,7 +63,7 @@ public class OrderClean {
 		if (values.length == schema.length) {
 			for (int i = 0; i < schema.length; i++) {
 				errorSchema[i] = schema[i];
-				if (values[i] != schema[i]) {
+				if (!values[i].equals(schema[i])) {
 					throw new DataCleanException("The schema is not mapping");
 				}
 			}
@@ -111,45 +110,48 @@ public class OrderClean {
 				} else {
 					errorInfo = errorInfo + ErrorType.ACCOUNT_ID_ERROR + " ";
 				}
-				//  check the bank to  check zimu
+				// check the bank to check zimu
 				String bank_toString = values[2];
-				if (bank_toString!=null&&bank_toString.length()==2&&bank_toString.matches("[A-Z][A-Z]")) {
-					
-				}else{
-					errorInfo = errorInfo+ErrorType.BANK_TO_ERROR+" ";
+				if (bank_toString != null && bank_toString.length() == 2 && bank_toString.matches("[A-Z][A-Z]")) {
+
+				} else {
+					errorInfo = errorInfo + ErrorType.BANK_TO_ERROR + " ";
 				}
 				// check account to
 				String account_toString = values[3];
-				if (account_toString!=null&&account_toString.matches("^[1-9]\\d*$")) {
-					
-				}else{
-					errorInfo = errorInfo+ErrorType.ACCOUNT_TO_ERROR+" ";
+				if (account_toString != null && account_toString.matches("^[1-9]\\d*$")) {
+
+				} else {
+					errorInfo = errorInfo + ErrorType.ACCOUNT_TO_ERROR + " ";
 				}
-				// check amount to 
+				// check amount to
 				String amountString = values[4];
-				if (amountString!=null&&amountString.matches("^[1-9]\\d*$")) {
-					
-				}else{
-					errorInfo = errorInfo+ErrorType.AMOUNT_ERROR;
+				if (amountString != null && amountString.matches("^[1-9]\\d*$")) {
+
+				} else {
+					errorInfo = errorInfo + ErrorType.AMOUNT_ERROR;
 				}
 				// check k_sybol
 				String k_symbol = values[5];
-				if (k_symbol!=null) {
-					if (k_symbol.equals("")||k_symbol.equals(SIPO)||k_symbol.equals(UVER)||
-							k_symbol.equals(SIPO)||k_symbol.equals(POJISTNE)) {
-					}else{
-						errorInfo = errorInfo + ErrorType.K_SYMBOL_ERROR+" ";
+				if (k_symbol != null) {
+					if (k_symbol.equals(" ") || k_symbol.equals(LEASING) || k_symbol.equals(UVER) || k_symbol.equals(SIPO)
+							|| k_symbol.equals(POJISTNE)) {
+					} else {
+						errorInfo = errorInfo + ErrorType.K_SYMBOL_ERROR + " ";
 					}
-				}else{
-					errorInfo  = errorInfo+ErrorType.K_SYMBOL_ERROR+" ";
+				} else {
+					errorInfo = errorInfo + ErrorType.K_SYMBOL_ERROR + " ";
 				}
-				if (errorInfo.length()>0) {
+				if (errorInfo.length() > 0) {
 					// write error values
-					values = Arrays.copyOf(values, values.length+1);
-					values[values.length-1] = errorInfo;
+					System.out.println("The error id is " + values[0]);
+					values = Arrays.copyOf(values, values.length + 1);
+					values[values.length - 1] = errorInfo;
 					errorFileWriter.writeNext(values);
-				}else{
+				} else {
 					// write clean values
+					System.out.println("The clean id is " + values[0]);
+					cleanFileWriter.writeNext(values);
 				}
 			}
 
@@ -167,7 +169,7 @@ public class OrderClean {
 
 	}
 
-	public static void main(String[] args) {
-
+	public static void main(String[] args) throws IOException, DataCleanException {
+		clean(origin, clean, error);
 	}
 }

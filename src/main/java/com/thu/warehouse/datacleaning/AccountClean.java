@@ -31,11 +31,11 @@ public class AccountClean {
 	private static final String TYDNE = "POPLATEK TYDNE";
 	private static final String OBRATU = "POPLATEK PO OBRATU";
 	private static final String originFile = "account.csv";
-	private static final String cleanDistrictFile = "dis.csv";
+	private static final String cleanDistrictFile = "districtClean.csv";
 	private static final String cleanFile = "accountClean.csv";
 	private static final String errorFile = "accountError.csv";
 
-	private static final String[] schema = { "account_id", "district_id", "district_id", "date" };
+	private static final String[] schema = { "account_id", "district_id", "frequency", "date" };
 	private static final DataType[] dataType = { DataType.INT, DataType.INT, DataType.STRING, DataType.DATA };
 
 	public static void clean(String input, String clean, String error) throws DataCleanException, IOException {
@@ -67,7 +67,7 @@ public class AccountClean {
 			// check the schema
 			for (int i = 0; i < schema.length; i++) {
 				errorSchema[i] = values[i];
-				if (values[i] != schema[i]) {
+				if (!values[i].equals(schema[i])) {
 					throw new DataCleanException("The schema name is not mapping: " + values[i] + " " + schema[i]);
 				}
 			}
@@ -148,12 +148,14 @@ public class AccountClean {
 
 				// output the value and the error information
 				if (errorInfo.length() > 0) {
+					System.out.println("error " + values[0]);
 					values = Arrays.copyOf(values, values.length + 1);
 					values[values.length - 1] = errorInfo;
 					errorFileWriter.writeNext(values);
 				} else {
+					System.out.println("clean " + values[0]);
 					// do't write the clean data
-					// cleanFileWriter.writeNext(values);
+					cleanFileWriter.writeNext(values);
 				}
 
 			}
@@ -172,7 +174,7 @@ public class AccountClean {
 	}
 
 	public static void main(String[] args) throws DataCleanException, IOException {
-		clean(originFile, cleanFile, errorFile);
+//		clean(originFile, cleanFile, errorFile);
 	}
 
 }

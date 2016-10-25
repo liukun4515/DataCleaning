@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.opencsv.CSVReader;
@@ -25,11 +26,11 @@ public class DispClean {
 	private static final String[] schema = { "disp_id", "client_id", "account_id", "type" };
 	private static final DataType[] dataType = { DataType.INT, DataType.INT, DataType.STRING };
 
-	private static final String origin = "";
-	private static final String client = "";
-	private static final String account = "";
-	private static final String clean = "";
-	private static final String error = "";
+	private static final String origin = "disp.csv";
+	private static final String client = "clientClean.csv";
+	private static final String account = "accountClean.csv";
+	private static final String clean = "dispClean.csv";
+	private static final String error = "dispError.csv";
 
 	public static void clean(String input, String clean, String error) throws DataCleanException, IOException {
 		File inputFile = new File(input);
@@ -55,9 +56,17 @@ public class DispClean {
 		Set<Integer> account_id_set = new HashSet<>();
 
 		// add client id set
-
+		clientFileReader.readNext();
+		List<String[]> list = clientFileReader.readAll();
+		for (String[] strings : list) {
+			client_id_set.add(Integer.valueOf(strings[0]));
+		}
 		// add account id set
-
+		accountFileReader.readNext();
+		List<String[]> list1 = accountFileReader.readAll();
+		for (String[] strings : list1) {
+			account_id_set.add(Integer.valueOf(strings[0]));
+		}
 		// the schema
 		values = inputFileReader.readNext();
 		if (values.length == schema.length) {
@@ -126,11 +135,13 @@ public class DispClean {
 				}
 
 				if (errorInfo.length() > 0) {
+					System.out.println("The error id " + values[0]);
 					values = Arrays.copyOf(values, values.length + 1);
 					values[values.length - 1] = errorInfo;
 					errorFileWriter.writeNext(values);
 				} else {
-					// write clean data
+					System.out.println("The clean id " + values[0]);
+					cleanFileWriter.writeNext(values);
 				}
 			}
 			inputFileReader.close();
@@ -146,11 +157,10 @@ public class DispClean {
 			errorFileWriter.close();
 			throw new DataCleanException("The schema is not mapping");
 		}
-
 	}
 
-	public static void main(String[] args) {
-		
+	public static void main(String[] args) throws DataCleanException, IOException {
+//		clean(origin, clean, error);
 	}
 
 }

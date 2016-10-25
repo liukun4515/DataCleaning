@@ -3,12 +3,12 @@ package com.thu.warehouse.datacleaning;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.FilterReader;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import com.opencsv.CSVReader;
@@ -22,17 +22,17 @@ public class CardClean {
 		CARD_ID_ERROR, DISP_ID_ERROR, TYPE_ERROR, ISSUED_ERROR, LENGTH_ERROR, CARD_ID_UNIQUE_ERROR, DISP_ID_NOT_FOUND_ERROR
 	}
 
-	private static final String orgin = "";
-	private static final String clean = "";
-	private static final String error = "";
-	private static final String disp = "";
+	private static final String orgin = "card.csv";
+	private static final String clean = "cardClean.csv";
+	private static final String error = "cardError.csv";
+	private static final String disp = "dispClean.csv";
 
 	private static final String CLASSIC = "classic";
 	private static final String JUNIOR = "junior";
 	private static final String GOLD = "gold";
 
 	// schema
-	private static final String[] schema = { "card_id", "disp_id", "disp_id", "issued" };
+	private static final String[] schema = { "card_id", "disp_id", "type", "issued" };
 	private static final DataType[] dataType = { DataType.INT, DataType.INT, DataType.STRING, DataType.DATA };
 
 	public static void clean(String input, String clean, String error) throws DataCleanException, IOException {
@@ -72,6 +72,11 @@ public class CardClean {
 			cleanFileWriter.writeNext(schema);
 
 			// get the disp_id_Set
+			dispFileReader.readNext();
+			List<String[]> list = dispFileReader.readAll();
+			for (String[] strings : list) {
+				disp_id_set.add(Integer.valueOf(strings[0]));
+			}
 
 			while ((values = inputFileReader.readNext()) != null) {
 				String errorInfo = "";
@@ -106,8 +111,8 @@ public class CardClean {
 				}
 				// check the type, this is the type of enum
 				String typeString = values[2];
-				if (typeString != null && CLASSIC.equals(typeString) && JUNIOR.equals(typeString)
-						&& GOLD.equals(typeString)) {
+				if (typeString != null &&( CLASSIC.equals(typeString) || JUNIOR.toString().equals(typeString)
+						|| GOLD.toString().equals(typeString))) {
 					// do nothing
 				} else {
 					errorInfo = errorInfo + ErrorType.TYPE_ERROR + " ";
@@ -127,11 +132,14 @@ public class CardClean {
 					errorInfo = errorInfo + ErrorType.ISSUED_ERROR + " ";
 				}
 				if (errorInfo.length() > 0) {
+					System.out.println("The error id is " + values[0]);
 					values = Arrays.copyOf(values, values.length + 1);
 					values[values.length - 1] = errorInfo;
 					errorFileWriter.writeNext(values);
 				} else {
 					// write the clean data
+					System.out.println("The clean id is " + values[0]);
+					cleanFileWriter.writeNext(values);
 				}
 
 			}
@@ -149,8 +157,8 @@ public class CardClean {
 		}
 	}
 
-	public static void main(String[] args) {
-
+	public static void main(String[] args) throws DataCleanException, IOException {
+//		clean(orgin, clean, error);
 	}
 
 }

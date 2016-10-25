@@ -1,0 +1,4 @@
+"loan_id","account_id","date","amount","duration","payments","status","payduration","error_info"
+"5997","4894","1993/11/4 0:00","117024","22","4876","A","17","DURATION_ERROR PAYMENTS_ERROR "
+"5495","2580","1996/8/2 0:00","89340","-60","1489","C","50","DURATION_ERROR PAYMENTS_ERROR PAYDUARTION_ERROR "
+"7130","10411","1996/12/11 0:00","123402","24","5142","A","17","PAYMENTS_ERROR "
