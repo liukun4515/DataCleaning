@@ -1,0 +1,3 @@
+card_id,disp_id,type,issued,error_info
+546,3465,golden,1997/8/19 0:00,TYPE_ERROR 
+339,2154,classic,1998/10/19 0:00,DISP_ID_NOT_FOUND_ERROR 
