@@ -52,8 +52,8 @@ public class CardClean {
 
 		CSVReader inputFileReader = new CSVReader(new FileReader(inputFile));
 		CSVReader dispFileReader = new CSVReader(new FileReader(dispFile));
-		CSVWriter cleanFileWriter = new CSVWriter(new FileWriter(cleanFile));
-		CSVWriter errorFileWriter = new CSVWriter(new FileWriter(errorFile));
+		CSVWriter cleanFileWriter = new CSVWriter(new FileWriter(cleanFile),CSVWriter.DEFAULT_SEPARATOR,CSVWriter.NO_QUOTE_CHARACTER);
+		CSVWriter errorFileWriter = new CSVWriter(new FileWriter(errorFile),CSVWriter.DEFAULT_SEPARATOR,CSVWriter.NO_QUOTE_CHARACTER);
 		String[] values;
 		String[] errorSchema = new String[schema.length + 1];
 		values = inputFileReader.readNext();
@@ -158,7 +158,7 @@ public class CardClean {
 	}
 
 	public static void main(String[] args) throws DataCleanException, IOException {
-//		clean(orgin, clean, error);
+		clean(orgin, clean, error);
 	}
 
 }

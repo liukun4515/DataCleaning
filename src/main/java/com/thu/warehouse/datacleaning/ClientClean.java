@@ -22,13 +22,16 @@ public class ClientClean {
 		CLIENT_ID_ERROR, BIRTH_NUMBER_ERROR, DISTRICT_ID_ERROR, CLIENT_ID_UNIQUE_ERROR, LENGTH_ERROR, DISTRICT_ID_NOT_FOUNT_ERROR
 	}
 
-	public static final String[] schema = { "client_id", "birth_number", "district_id" };
+	public static String[] schema = { "client_id", "birth_number", "district_id" };
 	public static final DataType[] dataType = { DataType.INT, DataType.INT, DataType.INT };
 
 	public static final String origin = "client.csv";
 	public static final String cleanDistrict = "district.csv";
 	public static final String clean = "clientClean.csv";
 	public static final String error = "clientError.csv";
+	public static final String sex = "sex";
+	public static final String age = "age";
+	public static final String ageRange = "age_range";
 
 	public static void clean(String input, String clean, String error) throws DataCleanException, IOException {
 
@@ -54,8 +57,8 @@ public class ClientClean {
 
 		CSVReader inputFileReader = new CSVReader(new FileReader(inputFile));
 		CSVReader districtFileReader = new CSVReader(new FileReader(districtFile));
-		CSVWriter cleanFileWriter = new CSVWriter(new FileWriter(cleanFile));
-		CSVWriter errorFileWriter = new CSVWriter(new FileWriter(errorFile));
+		CSVWriter cleanFileWriter = new CSVWriter(new FileWriter(cleanFile),CSVWriter.DEFAULT_SEPARATOR,CSVWriter.NO_QUOTE_CHARACTER);
+		CSVWriter errorFileWriter = new CSVWriter(new FileWriter(errorFile),CSVWriter.DEFAULT_SEPARATOR,CSVWriter.NO_QUOTE_CHARACTER);
 
 		String[] values;
 		String[] errorSchema = new String[schema.length + 1];
@@ -79,12 +82,21 @@ public class ClientClean {
 			}
 			errorSchema[errorSchema.length - 1] = "error_info";
 
+			// add the schema
+			schema = Arrays.copyOf(schema, schema.length + 3);
+			schema[schema.length - 1] = ageRange;
+			schema[schema.length - 2] = age;
+			schema[schema.length - 3] = sex;
+
 			cleanFileWriter.writeNext(schema);
 			errorFileWriter.writeNext(errorSchema);
 			while ((values = inputFileReader.readNext()) != null) {
+				String sex = "";
+				int age = 0;
+				int ageRange = 0;
 				String errorInfo = "";
 				// check the value length
-				if (values.length != schema.length) {
+				if (values.length != schema.length-3) {
 					errorInfo = errorInfo + ErrorType.LENGTH_ERROR + " ";
 				}
 				// check the client id
@@ -105,12 +117,14 @@ public class ClientClean {
 				String birth_numberString = values[1];
 				if (birth_numberString.length() == 6 && birth_numberString.matches("^[0-9]\\d*$")) {
 					int birth_numInt = Integer.valueOf(birth_numberString);
+					age = birth_numInt / 10000;
+					ageRange = age / 10 + 1;// 0-9 1 10-19 2 20-29 3
 					// solve the yymmdd the mm
 					int mm = birth_numInt / 100 % 100;
-
+					sex = "man";
 					if (mm > 12) {
 						mm = mm - 50;
-
+						sex = "woman";
 					}
 					if (mm > 0 && mm <= 12) {
 						if (mm <= 12 && mm >= 10) {
@@ -161,6 +175,10 @@ public class ClientClean {
 				} else {
 					// write the clean data
 					System.out.println("The clean id " + values[0]);
+					values = Arrays.copyOf(values, values.length + 3);
+					values[values.length - 1] = String.valueOf(ageRange);
+					values[values.length - 2] = String.valueOf(age);
+					values[values.length - 3] = sex;
 					cleanFileWriter.writeNext(values);
 				}
 
@@ -182,7 +200,7 @@ public class ClientClean {
 
 	public static void main(String[] args) throws DataCleanException, IOException {
 		// TODO Auto-generated method stub
-//		clean(origin, clean, error);
+		clean(origin, clean, error);
 	}
 
 }

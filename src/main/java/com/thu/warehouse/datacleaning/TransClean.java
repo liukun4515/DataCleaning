@@ -55,8 +55,8 @@ public class TransClean {
 
 		CSVReader inputFileReader = new CSVReader(new FileReader(inputFile));
 		CSVReader cleanAccountFileReader = new CSVReader(new FileReader(cleanAccountFile));
-		CSVWriter cleanFileWriter = new CSVWriter(new FileWriter(cleanFile));
-		CSVWriter errorFileWriter = new CSVWriter(new FileWriter(errorFile));
+		CSVWriter cleanFileWriter = new CSVWriter(new FileWriter(cleanFile),CSVWriter.DEFAULT_SEPARATOR,CSVWriter.NO_QUOTE_CHARACTER);
+		CSVWriter errorFileWriter = new CSVWriter(new FileWriter(errorFile),CSVWriter.DEFAULT_SEPARATOR,CSVWriter.NO_QUOTE_CHARACTER);
 
 		if (!inputFile.exists() || !cleanAccountFile.exists()) {
 			System.out.println("The input file and  account clean file is not exist");

@@ -53,8 +53,8 @@ public class DistrictClean {
 		}
 
 		CSVReader inputFileReader = new CSVReader(new FileReader(inputFile));
-		CSVWriter cleanFileWriter = new CSVWriter(new FileWriter(cleanFile));
-		CSVWriter errorFileWriter = new CSVWriter(new FileWriter(errorFile));
+		CSVWriter cleanFileWriter = new CSVWriter(new FileWriter(cleanFile),CSVWriter.DEFAULT_SEPARATOR,CSVWriter.NO_QUOTE_CHARACTER);
+		CSVWriter errorFileWriter = new CSVWriter(new FileWriter(errorFile),CSVWriter.DEFAULT_SEPARATOR,CSVWriter.NO_QUOTE_CHARACTER);
 		String[] values;
 		// get the schema
 		values = inputFileReader.readNext();
@@ -205,7 +205,7 @@ public class DistrictClean {
 
 	public static void main(String[] args) throws DataCleanException, IOException {
 		// TODO Auto-generated method stub
-//		clean(originFile, cleanFile, errorFile);
+		clean(originFile, cleanFile, errorFile);
 
 	}
 

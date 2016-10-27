@@ -57,8 +57,8 @@ public class AccountClean {
 		// construct the csv reader and writer
 		CSVReader inputFileReader = new CSVReader(new FileReader(inputFile));
 		CSVReader districtFileReader = new CSVReader(new FileReader(districtFile));
-		CSVWriter cleanFileWriter = new CSVWriter(new FileWriter(cleanFile));
-		CSVWriter errorFileWriter = new CSVWriter(new FileWriter(errorFile));
+		CSVWriter cleanFileWriter = new CSVWriter(new FileWriter(cleanFile),CSVWriter.DEFAULT_SEPARATOR,CSVWriter.NO_QUOTE_CHARACTER);
+		CSVWriter errorFileWriter = new CSVWriter(new FileWriter(errorFile),CSVWriter.DEFAULT_SEPARATOR,CSVWriter.NO_QUOTE_CHARACTER);
 		String[] values;
 		String[] errorSchema = new String[schema.length + 1];
 		// read the schema
@@ -174,7 +174,7 @@ public class AccountClean {
 	}
 
 	public static void main(String[] args) throws DataCleanException, IOException {
-//		clean(originFile, cleanFile, errorFile);
+		clean(originFile, cleanFile, errorFile);
 	}
 
 }

@@ -53,8 +53,8 @@ public class OrderClean {
 		}
 		CSVReader inputFileReader = new CSVReader(new FileReader(inputFile));
 		CSVReader accountFileReader = new CSVReader(new FileReader(accountFile));
-		CSVWriter cleanFileWriter = new CSVWriter(new FileWriter(cleanFile));
-		CSVWriter errorFileWriter = new CSVWriter(new FileWriter(errorFile));
+		CSVWriter cleanFileWriter = new CSVWriter(new FileWriter(cleanFile),CSVWriter.DEFAULT_SEPARATOR,CSVWriter.NO_QUOTE_CHARACTER);
+		CSVWriter errorFileWriter = new CSVWriter(new FileWriter(errorFile),CSVWriter.DEFAULT_SEPARATOR,CSVWriter.NO_QUOTE_CHARACTER);
 
 		String[] values;
 		String[] errorSchema = new String[schema.length + 1];
